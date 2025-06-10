@@ -1,0 +1,29 @@
+const { uploadFileToS3, listFilesFromS3 } = require('../services/s3Service'); // मानते हैं कि ये S3 functions yahan defined हैं
+
+const uploadFile = async (req, res) => {
+    try {
+        const file = req.file;
+        if (!file) return res.status(400).json({ message: "File not provided" });
+
+        const result = await uploadFileToS3(file);
+        console.log("S3 File Uploaded:", result);
+        res.status(200).json({ message: "Upload Successful", data: result });
+    } catch (error) {
+        res.status(500).json({ message: "Upload failed", error: error.message });
+    }
+};
+
+const getFiles = async (req, res) => {
+    try {
+        const files = await listFilesFromS3();
+        res.status(200).json({ files });
+    } catch (error) {
+        res.status(500).json({ message: "Fetch failed", error: error.message });
+    }
+};
+
+// CommonJS export
+module.exports = {
+    uploadFile,
+    getFiles
+};
