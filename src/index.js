@@ -36,7 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log(" Connected to MongoDB"))
-  .catch((error) => console.log("MongoDB Connection Error:", error));
+  .catch((error) => console.log(" MongoDB Connection Error:", error));
 
 //  Route Mounting
 app.use("/designs", designRoutes);
