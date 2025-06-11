@@ -13,8 +13,10 @@ const app = express();
 const PORT = process.env.PORT || 2000;
 
 // Setup CORS origins from env
-const allowedOrigins = process.env.CORS_ORIGIN?.split(",") || ["http://localhost:3000"];
-
+const allowedOrigins = [
+  "http://localhost:3000",        // Local frontend
+  "https://canvas-teamlans.vercel.app/", // Vercel frontend (change to actual)
+];
 //  Use security middlewares early
 app.use(
   cors({
@@ -28,6 +30,7 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
