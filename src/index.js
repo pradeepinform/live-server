@@ -12,6 +12,21 @@ const app = express();
 const PORT = process.env.PORT || 2000;
 const mediaRoutes = require('./routes/upload-routes.js');
 
+const allowedOrigins = process.env.CORS_ORIGIN?.split(",") || ["http://localhost:3000"];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB"))
