@@ -31,12 +31,6 @@ app.use('/api/s3', s3Routes);
 app.use('/api/media', mediaRoutes)
 
 
-
-
- 
-
-
-
 app.listen(PORT,()=>{
   console.log("server is connecting")
 })
