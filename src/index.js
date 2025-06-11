@@ -14,16 +14,17 @@ const PORT = process.env.PORT || 2000;
 
 // Setup CORS origins from env
 const allowedOrigins = [
-  "http://localhost:3000",        // Local frontend
-  "https://canvas-teamlans.vercel.app/", // Vercel frontend (change to actual)
+  "http://localhost:3000",
+  "https://canvas-teamlans.vercel.app" // ✅ fixed!
 ];
-//  Use security middlewares early
+
 app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.error("❌ CORS BLOCKED:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
