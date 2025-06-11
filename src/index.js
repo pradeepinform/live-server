@@ -22,6 +22,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 app.use("/designs", designRoutes);
 // Import Routes
 app.use("/api/gradients", gradientRoutes);
@@ -31,17 +32,12 @@ app.use('/api/media', mediaRoutes)
 
 
 
-async function startServer() {
-  try {
-    app.listen(PORT, () =>
-      console.log(`DESIGN Service running on port ${PORT}`)
-    );
-  } catch (error) {
-    console.error("Failed to connected to server", error);
-    process.exit(1);
-  }
-}
 
-startServer();
+ 
 
+
+
+app.listen(PORT,()=>{
+  console.log("server is connecting")
+})
 
