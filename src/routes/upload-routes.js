@@ -1,21 +1,19 @@
-const express = require("express");
-const multer = require("multer");
+import express from "express";
+import multer from "multer";
 
-
-const authenticatedRequest = require("../middleware/auth-middleware");
-const { uploadMedia,getAllMediasByUser } = require("../controllers/upload-controller");
+// import authenticatedRequest from "../middleware/auth-middleware.js";
+import { uploadMedia, getAllMediasByUser } from "../controllers/upload-controller.js";
+import authMiddleware from "../middleware/auth-middleware.js";
 
 const router = express.Router();
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: 10 * 1024 * 1024,
+  limits: 10 * 1024 * 1024, // 10MB
 }).single("file");
 
 router.post(
-  "/upload",
-  authenticatedRequest,
-
+  "/upload",authMiddleware,
   (req, res, next) => {
     upload(req, res, function (err) {
       if (err instanceof multer.MulterError) {
@@ -43,7 +41,6 @@ router.post(
   uploadMedia
 );
 
-router.get("/get", authenticatedRequest, getAllMediasByUser);
+router.get("/get",authMiddleware, getAllMediasByUser);
 
-
-module.exports = router;
+export default router;

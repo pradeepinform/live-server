@@ -1,8 +1,8 @@
-const { PutObjectCommand, ListObjectsV2Command } = require("@aws-sdk/client-s3");
-const s3 = require("../config/aws");
-const { v4: uuid } = require("uuid");
+import { PutObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
+import s3 from "../config/aws.js";
+import { v4 as uuid } from "uuid";
 
-const uploadFileToS3 = async (file) => {
+export const uploadFileToS3 = async (file) => {
   const folderName = "images"; 
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
@@ -16,7 +16,7 @@ const uploadFileToS3 = async (file) => {
   return result; // contains ETag etc.
 };
 
-const listFilesFromS3 = async () => {
+export const listFilesFromS3 = async () => {
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
   };
@@ -28,9 +28,4 @@ const listFilesFromS3 = async () => {
     lastModified: item.LastModified,
     url: `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${item.Key}`,
   }));
-};
-
-module.exports = {
-  uploadFileToS3,
-  listFilesFromS3,
 };

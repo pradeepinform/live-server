@@ -1,54 +1,65 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const helmet = require("helmet");
+import dotenv from "dotenv";
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import helmet from "helmet";
+import cookieParser from "cookie-parser";
 
-const designRoutes = require("./routes/design-routes.js");
-const gradientRoutes = require("./routes/gradientRoutes.js");
-const s3Routes = require("./routes/s3Route.js");
-const mediaRoutes = require("./routes/upload-routes.js");
+// Import Routes
+import designRoutes from "./routes/design-routes.js";
+import gradientRoutes from "./routes/gradientRoutes.js";
+import s3Routes from "./routes/s3Route.js";
+import mediaRoutes from "./routes/upload-routes.js";
+import authRouters from "./routes/authRoutes.js";
+
+// Load env variables
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 2000;
 
-// Setup CORS origins from env
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://canvas-teamlans.vercel.app" // ✅ fixed!
-];
+// Middleware Setup
+app.use(cors({
+  origin: process.env.UI_URL,
+  credentials: true,
+}));
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.error("❌ CORS BLOCKED:", origin);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+// Middleware
+app.use(express.json());
+app.use(cookieParser());
 
 app.use(helmet());
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//  Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log(" Connected to MongoDB"))
-  .catch((error) => console.log(" MongoDB Connection Error:", error));
+// 🔍 Request Logging (dev)
+app.use((req, res, next) => {
+  console.log("🔍 Incoming Request:", req.method, req.url);
+  console.log("🧾 Origin:", req.headers.origin);
+  console.log("🛂 Authorization Header:", req.headers.authorization);
+  next();
+});
 
-//  Route Mounting
+// DB Connection
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB error:", err));
+
+const PORT = process.env.PORT || 2000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Routes
 app.use("/designs", designRoutes);
 app.use("/api/gradients", gradientRoutes);
 app.use("/api/s3", s3Routes);
 app.use("/api/media", mediaRoutes);
+app.use("/api/auth", authRouters);
 
-//  Start Server
-app.listen(PORT, () => {
-  console.log(` Server is running on port ${PORT}`);
+// Test route
+app.get("/test", (req, res) => {
+  console.log("🍪 Test cookie:", req.cookies);
+  res.send("OK");
 });
+

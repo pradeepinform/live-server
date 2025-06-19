@@ -1,22 +1,23 @@
-const { OAuth2Client } = require("google-auth-library");
+// middleware/authMiddleware.js
+import { OAuth2Client } from 'google-auth-library';
+import dotenv from 'dotenv';
+
+dotenv.config();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-async function authMiddleware(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
+const authMiddleware = async (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  console.log("Middleware Token = ", token)
   if (!token) {
-    return res.status(401).json({ error: "Access denied! No Token provided" });
+    return res.status(401).json({ message: "No Token Provided" });
   }
 
   try {
     const ticket = await client.verifyIdToken({
-      
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-console.log(ticket);
     const payload = ticket.getPayload();
+
     req.user = {
       userId: payload.sub,
       email: payload.email,
@@ -24,10 +25,10 @@ console.log(ticket);
     };
 
     next();
-  } catch (err) {
-    console.error("Token verification failed", err.message);
-    return res.status(401).json({ error: "Invalid Token!" });
+  } catch (error) {
+    console.error("Google token verify error:", error.message);
+    return res.status(401).json({ message: "Invalid Token" });
   }
-}
+};
 
-module.exports = authMiddleware;
+export default authMiddleware;

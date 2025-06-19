@@ -1,7 +1,10 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const mediaSchema = new mongoose.Schema({
-  userId: String,
+  userId: {
+    type: String,
+    required: true, 
+  },
   name: String,
   cloudinaryId: String,
   url: String,
@@ -15,5 +18,6 @@ const mediaSchema = new mongoose.Schema({
   },
 });
 
+
 const Media = mongoose.models.Media || mongoose.model("Media", mediaSchema);
-module.exports = Media;
+export default Media;

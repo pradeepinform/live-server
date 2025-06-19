@@ -1,11 +1,16 @@
-const express = require("express");
+import express from "express";
+import { getAllGradients } from "../controllers/gradientController.js";
+// import authMiddleware from "../middleware/auth-middleware.js";
+
 const router = express.Router();
-const gradientController = require("../controllers/gradientController.js");
 
 // GET all gradients
-router.get("/", gradientController.getAllGradients);
+router.get("/", getAllGradients);
 
 // POST insert default gradients (for seeding)
-router.post("/gradient", gradientController.insertDefaultGradients);
+// router.post("/gradient",authMiddleware, saveGradientColor);
+// router.get("/:id",authMiddleware, getGradientColorId);
+// router.delete("/:id",authMiddleware, deleteGradientColor);
 
-module.exports = router;
+
+export default router;

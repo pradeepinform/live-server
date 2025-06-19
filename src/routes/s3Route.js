@@ -1,6 +1,6 @@
-const express = require('express');
-const multer = require('multer');
-const { uploadFile, getFiles } = require('../controllers/s3BucketController');
+import express from "express";
+import multer from "multer";
+import { uploadFile, getFiles } from "../controllers/s3BucketController.js";
 
 const router = express.Router();
 
@@ -9,7 +9,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // Routes
-router.post('/upload', upload.single('file'), uploadFile);
-router.get('/files', getFiles);
+router.post("/upload", upload.single("file"), uploadFile);
+router.get("/files", getFiles);
 
-module.exports = router;
+export default router;
